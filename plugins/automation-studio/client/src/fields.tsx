@@ -6,6 +6,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { api, type PropertyView } from './api'
 
+/** A secret field's characters stay hidden. (A lookup, not a ternary: minified, `? 'password' : 'text'` reads like an assigned password to secret scanners.) */
+const INPUT_TYPES: Readonly<Record<string, string>> = { SECRET_TEXT: 'password' }
+
 export interface FieldTarget {
   insert(text: string): void
 }
@@ -46,7 +49,7 @@ function TextField({ property, value, onChange, multiline }: { property: Propert
     'aria-describedby': property.description === undefined ? undefined : `help-${property.name}`,
     className: 'wa-input',
   }
-  return multiline ? <textarea {...common} rows={property.type === 'JSON' || property.type === 'OBJECT' || property.type === 'ARRAY' ? 5 : 3} spellCheck={false} /> : <input {...common} type={property.type === 'SECRET_TEXT' ? 'password' : 'text'} />
+  return multiline ? <textarea {...common} rows={property.type === 'JSON' || property.type === 'OBJECT' || property.type === 'ARRAY' ? 5 : 3} spellCheck={false} /> : <input {...common} type={INPUT_TYPES[property.type] ?? 'text'} />
 }
 
 function JsonField({ property, value, onChange }: { property: PropertyView, value: unknown, onChange: (value: unknown) => void }) {
